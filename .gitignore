@@ -243,3 +243,9 @@ video_creation/data/videos.json
 video_creation/data/envvars.txt
 
 config.toml
+
+results/client_secrets.json
+results/client_secrets.json.template
+results/upload_video.py-oauth2.json
+results/*/*.mp4
+results/test.py
