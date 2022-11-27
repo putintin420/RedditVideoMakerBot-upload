@@ -244,11 +244,10 @@ video_creation/data/envvars.txt
 
 config.toml
 
-results/client_secrets.json
-results/client_secrets.json.template
 results/upload_video.py-oauth2.json
 results
 results/test.py
 video_creation/data/videos.json
 utils/upload/client_secrets.json
 video_creation/data/videos.json
+utils/upload/client_secrets.json
