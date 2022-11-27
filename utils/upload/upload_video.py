@@ -42,7 +42,7 @@ RETRIABLE_STATUS_CODES = [500, 502, 503, 504]
 #   https://developers.google.com/youtube/v3/guides/authentication
 # For more information about the client_secrets.json file format, see:
 #   https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
-CLIENT_SECRETS_FILE = "client_secrets.json"
+CLIENT_SECRETS_FILE = "./utils/upload/client_secrets.json"
 
 # This OAuth 2.0 access scope allows an application to upload files to the
 # authenticated user's YouTube channel, but doesn't allow other types of access.
@@ -122,18 +122,18 @@ def initialize_upload(options, next_upload_time):
         media_body=MediaFileUpload(options["file"], chunksize=-1, resumable=True),
     )
 
-    resumable_upload(insert_request, next_upload_time)
+    resumable_upload(insert_request, next_upload_time, options)
 
 
 # This method implements an exponential backoff strategy to resume a
 # failed upload.
-def resumable_upload(insert_request, next_upload_time):
+def resumable_upload(insert_request, next_upload_time, options):
     response = None
     error = None
     retry = 0
     while response is None:
         try:
-            print("Uploading file...")
+            print("Uploading file... -> " + options["title"])
             status, response = insert_request.next_chunk()
             if response is not None:
                 if "id" in response:
@@ -172,7 +172,8 @@ def resumable_upload(insert_request, next_upload_time):
 
 def updateUploadedStatus(currIndex, time):
     # opens the json containing video_creation data (used for logic and upload data)
-    f = open("..\\video_creation\\data\\videos.json")
+    # f = open("../../video_creation/data/videos.json")
+    f = open("./video_creation/data/videos.json")
     # loads videos.json into a dictionary
     video_data = json.load(f)
 
@@ -182,7 +183,9 @@ def updateUploadedStatus(currIndex, time):
     # serialises the dictionary to json
     json_obj = json.dumps(video_data, indent=4, default=str)
     # writes the file
-    with open("..\\video_creation\\data\\videos.json", "w") as outfile:
+    
+    # with open("../../video_creation/data/videos.json", "w") as outfile:
+    with open("./video_creation/data/videos.json", "w") as outfile:
         outfile.write(json_obj)
 
 
@@ -209,7 +212,8 @@ def upload_youtube(video, prev_video):
         title = title + "?"
 
     options = {
-        "file": file_name,
+        # "file": file_name,
+        "file": "./results/" + file_name,
         "title": title,
         "description": description,
         "category": "22",
@@ -219,10 +223,10 @@ def upload_youtube(video, prev_video):
     }
 
     if not os.path.exists(options["file"]):
-        # print(options["file"])
+        print(options["file"])
         exit(
             "could not find the specified file --> {0} / {1}".format(
-                options["file"].split("/")[0], options["file"].split("/")[1]
+                options["file"].split("/")[0], options["file"].split("/")[3]
             )
         )
 
@@ -233,7 +237,8 @@ def upload_youtube(video, prev_video):
 if __name__ == "__main__":
 
     # opens the json containing video_creation data (used for logic and upload data)
-    f = open("..\\video_creation\\data\\videos.json")
+   
+    f = open("./video_creation/data/videos.json")
     # loads videos.json into a dictionary
     # next_upload = datetime.strptime(prev_video["uploaded_at"], format_data) + timedelta(
     #     hours=4
@@ -250,4 +255,4 @@ if __name__ == "__main__":
                     uploaded += 1
 
                 except HttpError as e:
-                    print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+                    quit("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
