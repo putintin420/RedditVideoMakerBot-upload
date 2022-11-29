@@ -56,7 +56,6 @@ def save_data(subreddit: str, filename: str, reddit_title: str, reddit_id: str, 
             "reddit_title": reddit_title,
             "filename": filename,
             "uploaded": False
-
         }
         done_vids.append(payload)
         raw_vids.seek(0)
